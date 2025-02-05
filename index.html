@@ -35,60 +35,67 @@
         #fileList a:hover {
             text-decoration: underline;
         }
-
-        #uploadMessage {
-            color: red;
-        }
     </style>
 </head>
 <body>
-    <h2>Uploaded PDFs:</h2>
-    <ul id="fileList"></ul>
+    <h2>Upload a PDF File</h2>
 
-    <!-- Upload form only for you (optional front-end restriction) -->
-    <h3>Upload PDF (Admin Only):</h3>
+    <!-- File upload input -->
     <input type="file" id="fileInput" accept="application/pdf">
     <button onclick="uploadFile()">Upload</button>
-    <p id="uploadMessage"></p>
 
+    <!-- Status message -->
+    <p id="status"></p>
+
+    <h3>Uploaded PDFs:</h3>
+    <ul id="fileList"></ul>
+
+    <!-- Link to the JS file -->
     <script>
-        // Show the list of uploaded files
-        fetch('/files')
-            .then(response => response.json())
-            .then(files => {
-                const fileList = document.getElementById('fileList');
-                files.forEach(file => {
-                    const li = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = `/uploads/${file}`;
-                    link.textContent = file;
-                    li.appendChild(link);
-                    fileList.appendChild(li);
-                });
-            });
-
-        // Upload function for admin only
+        // Function to handle file upload
         function uploadFile() {
-            const fileInput = document.getElementById('fileInput');
+            const fileInput = document.getElementById("fileInput");
             const formData = new FormData();
-            formData.append('pdf', fileInput.files[0]);
+            formData.append("file", fileInput.files[0]);
 
-            fetch('/upload', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + btoa('your-username:your-password')  // Base64 encoded username:password
-                },
+            fetch("/upload", {
+                method: "POST",
                 body: formData
             })
-            .then(response => response.text())
-            .then(message => {
-                document.getElementById('uploadMessage').textContent = message;
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("status").textContent = data.message;
+                loadFileList(); // Reload file list after upload
             })
             .catch(error => {
-                document.getElementById('uploadMessage').textContent = 'Upload failed';
+                console.error("Error uploading file:", error);
+                document.getElementById("status").textContent = "Error uploading file";
             });
         }
+
+        // Function to load the list of uploaded files
+        function loadFileList() {
+            fetch("/files")
+            .then(response => response.json())
+            .then(files => {
+                const fileList = document.getElementById("fileList");
+                fileList.innerHTML = ""; // Clear existing list
+                files.forEach(file => {
+                    const listItem = document.createElement("li");
+                    const fileLink = document.createElement("a");
+                    fileLink.href = "/uploads/" + file;
+                    fileLink.textContent = file;
+                    listItem.appendChild(fileLink);
+                    fileList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error("Error loading file list:", error);
+            });
+        }
+
+        // Load the file list on page load
+        window.onload = loadFileList;
     </script>
 </body>
 </html>
-
