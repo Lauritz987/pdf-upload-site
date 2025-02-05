@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload PDF</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        #status {
+            margin-top: 10px;
+            color: green;
+        }
+
+        #fileList {
+            margin-top: 20px;
+        }
+
+        #fileList li {
+            margin: 5px 0;
+        }
+
+        #fileList a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        #fileList a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Upload a PDF File</h2>
+
+    <!-- File upload input -->
+    <input type="file" id="fileInput" accept="application/pdf">
+    <button onclick="uploadFile()">Upload</button>
+
+    <!-- Status message -->
+    <p id="status"></p>
+
+    <h3>Uploaded PDFs:</h3>
+    <ul id="fileList"></ul>
+
+    <!-- Link to the JS file -->
+    <script src="upload.js"></script>
+</body>
+</html>
