@@ -35,22 +35,60 @@
         #fileList a:hover {
             text-decoration: underline;
         }
+
+        #uploadMessage {
+            color: red;
+        }
     </style>
 </head>
 <body>
-    <h2>Upload a PDF File</h2>
-
-    <!-- File upload input -->
-    <input type="file" id="fileInput" accept="application/pdf">
-    <button onclick="uploadFile()">Upload</button>
-
-    <!-- Status message -->
-    <p id="status"></p>
-
-    <h3>Uploaded PDFs:</h3>
+    <h2>Uploaded PDFs:</h2>
     <ul id="fileList"></ul>
 
-    <!-- Link to the JS file -->
-    <script src="upload.js"></script>
+    <!-- Upload form only for you (optional front-end restriction) -->
+    <h3>Upload PDF (Admin Only):</h3>
+    <input type="file" id="fileInput" accept="application/pdf">
+    <button onclick="uploadFile()">Upload</button>
+    <p id="uploadMessage"></p>
+
+    <script>
+        // Show the list of uploaded files
+        fetch('/files')
+            .then(response => response.json())
+            .then(files => {
+                const fileList = document.getElementById('fileList');
+                files.forEach(file => {
+                    const li = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = `/uploads/${file}`;
+                    link.textContent = file;
+                    li.appendChild(link);
+                    fileList.appendChild(li);
+                });
+            });
+
+        // Upload function for admin only
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const formData = new FormData();
+            formData.append('pdf', fileInput.files[0]);
+
+            fetch('/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa('your-username:your-password')  // Base64 encoded username:password
+                },
+                body: formData
+            })
+            .then(response => response.text())
+            .then(message => {
+                document.getElementById('uploadMessage').textContent = message;
+            })
+            .catch(error => {
+                document.getElementById('uploadMessage').textContent = 'Upload failed';
+            });
+        }
+    </script>
 </body>
 </html>
+
