@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload PDF</title>
+    <title>Download PDFs</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,11 +12,6 @@
 
         h2 {
             color: #333;
-        }
-
-        #status {
-            margin-top: 10px;
-            color: green;
         }
 
         #fileList {
@@ -38,41 +33,12 @@
     </style>
 </head>
 <body>
-    <h2>Upload a PDF File</h2>
-
-    <!-- File upload input -->
-    <input type="file" id="fileInput" accept="application/pdf">
-    <button onclick="uploadFile()">Upload</button>
-
-    <!-- Status message -->
-    <p id="status"></p>
+    <h2>Download Available PDFs</h2>
 
     <h3>Uploaded PDFs:</h3>
     <ul id="fileList"></ul>
 
-    <!-- Link to the JS file -->
     <script>
-        // Function to handle file upload
-        function uploadFile() {
-            const fileInput = document.getElementById("fileInput");
-            const formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            fetch("/upload", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("status").textContent = data.message;
-                loadFileList(); // Reload file list after upload
-            })
-            .catch(error => {
-                console.error("Error uploading file:", error);
-                document.getElementById("status").textContent = "Error uploading file";
-            });
-        }
-
         // Function to load the list of uploaded files
         function loadFileList() {
             fetch("/files")
